@@ -1,6 +1,7 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Bird, Menu, X, Heart, Shield, Users, BookOpen } from "lucide-react";
+import { Bird, Menu, X, Heart, Shield, Users, BookOpen, LogIn } from "lucide-react";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -46,6 +47,12 @@ const Header = () => {
             <Button variant="ghost" className="text-muted-foreground hover:text-primary">
               FR | EN
             </Button>
+            <Link to="/login">
+              <Button variant="outline" size="sm">
+                <LogIn className="mr-2 h-4 w-4" />
+                Connexion
+              </Button>
+            </Link>
             <Button className="btn-conservation">
               <Heart className="mr-2 h-4 w-4" />
               Donate
@@ -80,6 +87,12 @@ const Header = () => {
                 <Button variant="ghost" className="w-full justify-start text-muted-foreground hover:text-primary">
                   FR | EN
                 </Button>
+                <Link to="/login">
+                  <Button variant="outline" className="w-full">
+                    <LogIn className="mr-2 h-4 w-4" />
+                    Connexion
+                  </Button>
+                </Link>
                 <Button className="w-full btn-conservation">
                   <Heart className="mr-2 h-4 w-4" />
                   Donate
