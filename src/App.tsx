@@ -15,6 +15,11 @@ import Blog from "./pages/Blog";
 import Events from "./pages/Events";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
+import AdminUsers from "./pages/admin/Users";
+import AdminActivities from "./pages/admin/Activities";
+import AdminReports from "./pages/admin/Reports";
+import AdminSettings from "./pages/admin/Settings";
+import AdminAnalytics from "./pages/admin/Analytics";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -39,6 +44,31 @@ const App = () => (
           <Route path="/dashboard" element={
             <ProtectedRoute>
               <Dashboard />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/users" element={
+            <ProtectedRoute>
+              <AdminUsers />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/activities" element={
+            <ProtectedRoute>
+              <AdminActivities />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/reports" element={
+            <ProtectedRoute>
+              <AdminReports />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/settings" element={
+            <ProtectedRoute>
+              <AdminSettings />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/analytics" element={
+            <ProtectedRoute>
+              <AdminAnalytics />
             </ProtectedRoute>
           } />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
