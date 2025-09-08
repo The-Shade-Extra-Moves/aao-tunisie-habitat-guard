@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '@/components/DashboardLayout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,6 +12,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Progress } from '@/components/ui/progress';
+import { Separator } from '@/components/ui/separator';
 import { mockReports, mockStats } from '@/lib/mockData';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -32,7 +35,15 @@ import {
   Settings,
   PieChart,
   LineChart,
-  Share2
+  Share2,
+  Star,
+  Clock,
+  CheckCircle,
+  AlertCircle,
+  FileBarChart,
+  Database,
+  Zap,
+  Target
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -45,18 +56,30 @@ const navigation = [
 ];
 
 export default function AdminReports() {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
+  const [filterType, setFilterType] = useState('all');
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date>();
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
   const filteredReports = mockReports.filter(report => {
     const matchesSearch = report.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          report.author.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = filterStatus === 'all' || report.status === filterStatus;
+    const matchesType = filterType === 'all' || report.type === filterType;
     
-    return matchesSearch && matchesStatus;
+    return matchesSearch && matchesStatus && matchesType;
   });
+
+  const handleViewReport = (reportId: string) => {
+    navigate(`/admin/reports/${reportId}`);
+  };
+
+  const handleEditReport = (reportId: string) => {
+    navigate(`/admin/reports/${reportId}/edit`);
+  };
 
   const CreateReportDialog = () => (
     <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
@@ -227,164 +250,395 @@ export default function AdminReports() {
   return (
     <DashboardLayout title="Gestion des Rapports" navigation={navigation}>
       <div className="space-y-6">
-        {/* Header */}
-        <div className="flex justify-between items-center">
-          <div>
-            <h2 className="text-2xl font-bold">Rapports</h2>
-            <p className="text-muted-foreground">
-              Générez et consultez tous les rapports de l'association
-            </p>
+        {/* Modern Header */}
+        <div className="relative overflow-hidden rounded-lg bg-gradient-to-r from-primary/10 via-primary/5 to-background p-8">
+          <div className="relative z-10">
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+              <div className="space-y-2">
+                <h1 className="text-3xl font-bold tracking-tight">Centre de Rapports</h1>
+                <p className="text-lg text-muted-foreground max-w-2xl">
+                  Tableau de bord intelligent pour la gestion, l'analyse et la génération de rapports avancés
+                </p>
+                <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                  <div className="flex items-center gap-1">
+                    <CheckCircle className="h-4 w-4 text-emerald-500" />
+                    <span>{mockReports.filter(r => r.status === 'published').length} rapports publiés</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Clock className="h-4 w-4 text-orange-500" />
+                    <span>{mockReports.filter(r => r.status === 'review').length} en révision</span>
+                  </div>
+                </div>
+              </div>
+              <div className="flex gap-3">
+                <Button variant="outline" size="lg" className="gap-2">
+                  <Upload className="h-4 w-4" />
+                  Importer
+                </Button>
+                <Button size="lg" className="gap-2" onClick={() => setIsCreateDialogOpen(true)}>
+                  <Plus className="h-4 w-4" />
+                  Nouveau Rapport
+                </Button>
+              </div>
+            </div>
           </div>
-          <Button onClick={() => setIsCreateDialogOpen(true)}>
-            <Plus className="mr-2 h-4 w-4" />
-            Nouveau Rapport
-          </Button>
+          <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl"></div>
         </div>
 
-        <Tabs defaultValue="reports" className="space-y-4">
-          <TabsList>
-            <TabsTrigger value="reports">Tous les rapports</TabsTrigger>
-            <TabsTrigger value="analytics">Analyses</TabsTrigger>
-            <TabsTrigger value="templates">Modèles</TabsTrigger>
+        <Tabs defaultValue="dashboard" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-5">
+            <TabsTrigger value="dashboard" className="flex items-center gap-2">
+              <BarChart3 className="h-4 w-4" />
+              Tableau de Bord
+            </TabsTrigger>
+            <TabsTrigger value="reports" className="flex items-center gap-2">
+              <FileText className="h-4 w-4" />
+              Rapports
+            </TabsTrigger>
+            <TabsTrigger value="analytics" className="flex items-center gap-2">
+              <TrendingUp className="h-4 w-4" />
+              Analytics
+            </TabsTrigger>
+            <TabsTrigger value="templates" className="flex items-center gap-2">
+              <Database className="h-4 w-4" />
+              Modèles
+            </TabsTrigger>
+            <TabsTrigger value="automation" className="flex items-center gap-2">
+              <Zap className="h-4 w-4" />
+              Automatisation
+            </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="reports" className="space-y-4">
-            {/* Stats Cards */}
-            <div className="grid gap-4 md:grid-cols-4">
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Total Rapports</CardTitle>
-                  <FileText className="h-4 w-4 text-muted-foreground" />
+          {/* Modern Dashboard Tab */}
+          <TabsContent value="dashboard" className="space-y-6">
+            {/* KPI Cards */}
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+              <Card className="relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-blue-600/5"></div>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative z-10">
+                  <CardTitle className="text-sm font-medium">Rapports Générés</CardTitle>
+                  <FileBarChart className="h-5 w-5 text-blue-600" />
                 </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{mockReports.length}</div>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Publiés</CardTitle>
-                  <Eye className="h-4 w-4 text-emerald-600" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">
-                    {mockReports.filter(r => r.status === 'published').length}
+                <CardContent className="relative z-10">
+                  <div className="text-3xl font-bold">{mockReports.length}</div>
+                  <div className="flex items-center text-xs text-muted-foreground mt-1">
+                    <TrendingUp className="h-3 w-3 mr-1 text-emerald-500" />
+                    +12% ce mois
                   </div>
+                  <Progress value={75} className="mt-3 h-2" />
                 </CardContent>
               </Card>
 
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">En révision</CardTitle>
-                  <Edit className="h-4 w-4 text-orange-600" />
+              <Card className="relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-emerald-600/5"></div>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative z-10">
+                  <CardTitle className="text-sm font-medium">Taux de Consultation</CardTitle>
+                  <Eye className="h-5 w-5 text-emerald-600" />
                 </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">
-                    {mockReports.filter(r => r.status === 'review').length}
+                <CardContent className="relative z-10">
+                  <div className="text-3xl font-bold">94.2%</div>
+                  <div className="flex items-center text-xs text-muted-foreground mt-1">
+                    <TrendingUp className="h-3 w-3 mr-1 text-emerald-500" />
+                    +5.1% cette semaine
                   </div>
+                  <Progress value={94} className="mt-3 h-2" />
                 </CardContent>
               </Card>
 
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Total Téléchargements</CardTitle>
-                  <Download className="h-4 w-4 text-blue-600" />
+              <Card className="relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-purple-600/5"></div>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative z-10">
+                  <CardTitle className="text-sm font-medium">Téléchargements</CardTitle>
+                  <Download className="h-5 w-5 text-purple-600" />
                 </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">
-                    {mockReports.reduce((sum, r) => sum + r.downloads, 0)}
+                <CardContent className="relative z-10">
+                  <div className="text-3xl font-bold">
+                    {mockReports.reduce((sum, r) => sum + r.downloads, 0).toLocaleString()}
                   </div>
+                  <div className="flex items-center text-xs text-muted-foreground mt-1">
+                    <TrendingUp className="h-3 w-3 mr-1 text-emerald-500" />
+                    +23% ce mois
+                  </div>
+                  <Progress value={85} className="mt-3 h-2" />
+                </CardContent>
+              </Card>
+
+              <Card className="relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 to-orange-600/5"></div>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative z-10">
+                  <CardTitle className="text-sm font-medium">Score Qualité</CardTitle>
+                  <Star className="h-5 w-5 text-orange-600" />
+                </CardHeader>
+                <CardContent className="relative z-10">
+                  <div className="text-3xl font-bold">4.8</div>
+                  <div className="flex items-center text-xs text-muted-foreground mt-1">
+                    <Star className="h-3 w-3 mr-1 text-orange-500 fill-current" />
+                    Excellente qualité
+                  </div>
+                  <Progress value={96} className="mt-3 h-2" />
                 </CardContent>
               </Card>
             </div>
 
-            {/* Filters */}
+            {/* Quick Actions */}
             <Card>
               <CardHeader>
-                <CardTitle>Filtres et Recherche</CardTitle>
+                <CardTitle className="flex items-center gap-2">
+                  <Target className="h-5 w-5" />
+                  Actions Rapides
+                </CardTitle>
+                <CardDescription>
+                  Accédez rapidement aux fonctionnalités les plus utilisées
+                </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="flex gap-4 items-end">
-                  <div className="flex-1">
-                    <Label htmlFor="search">Rechercher</Label>
-                    <div className="relative">
-                      <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        id="search"
-                        placeholder="Rechercher par titre ou auteur..."
-                        className="pl-8"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                      />
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <Label>Statut</Label>
-                    <Select value={filterStatus} onValueChange={setFilterStatus}>
-                      <SelectTrigger className="w-40">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">Tous les statuts</SelectItem>
-                        <SelectItem value="draft">Brouillon</SelectItem>
-                        <SelectItem value="review">En révision</SelectItem>
-                        <SelectItem value="published">Publié</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+                <div className="grid gap-4 md:grid-cols-3">
+                  <Button variant="outline" className="h-20 flex-col gap-2" onClick={() => setIsCreateDialogOpen(true)}>
+                    <Plus className="h-6 w-6" />
+                    <span>Nouveau Rapport</span>
+                  </Button>
+                  <Button variant="outline" className="h-20 flex-col gap-2">
+                    <BarChart3 className="h-6 w-6" />
+                    <span>Analyse Avancée</span>
+                  </Button>
+                  <Button variant="outline" className="h-20 flex-col gap-2">
+                    <Share2 className="h-6 w-6" />
+                    <span>Partager Rapport</span>
+                  </Button>
                 </div>
               </CardContent>
             </Card>
 
-            {/* Reports List */}
-            <div className="grid gap-4">
+            {/* Recent Activity */}
+            <div className="grid gap-6 lg:grid-cols-2">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Rapports Récents</CardTitle>
+                  <CardDescription>Les derniers rapports créés</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {mockReports.slice(0, 4).map((report) => (
+                      <div key={report.id} className="flex items-center gap-4 p-3 rounded-lg hover:bg-muted/50 transition-colors cursor-pointer"
+                           onClick={() => handleViewReport(report.id)}>
+                        <div className="p-2 rounded-lg bg-primary/10">
+                          <FileText className="h-4 w-4 text-primary" />
+                        </div>
+                        <div className="flex-1 space-y-1">
+                          <p className="text-sm font-medium">{report.title}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {new Date(report.date).toLocaleDateString('fr-FR')}
+                          </p>
+                        </div>
+                        <Badge variant={report.status === 'published' ? 'default' : 'secondary'}>
+                          {report.status === 'published' ? 'Publié' : 'En révision'}
+                        </Badge>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Statistiques de Performance</CardTitle>
+                  <CardDescription>Métriques clés de vos rapports</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span>Rapports Mensuels</span>
+                      <span className="font-medium">8/10</span>
+                    </div>
+                    <Progress value={80} className="h-2" />
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span>Taux de Lecture</span>
+                      <span className="font-medium">94%</span>
+                    </div>
+                    <Progress value={94} className="h-2" />
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span>Engagement</span>
+                      <span className="font-medium">76%</span>
+                    </div>
+                    <Progress value={76} className="h-2" />
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span>Qualité Moyenne</span>
+                      <span className="font-medium">4.8/5</span>
+                    </div>
+                    <Progress value={96} className="h-2" />
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="reports" className="space-y-6">
+            {/* Advanced Filters */}
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle>Gestion des Rapports</CardTitle>
+                    <CardDescription>Filtrez, recherchez et gérez vos rapports</CardDescription>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      variant={viewMode === 'grid' ? 'default' : 'outline'}
+                      size="sm"
+                      onClick={() => setViewMode('grid')}
+                    >
+                      <PieChart className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant={viewMode === 'list' ? 'default' : 'outline'}
+                      size="sm"
+                      onClick={() => setViewMode('list')}
+                    >
+                      <FileText className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="flex flex-col lg:flex-row gap-4">
+                  <div className="flex-1 relative">
+                    <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      placeholder="Rechercher par titre, auteur, contenu..."
+                      className="pl-9 h-10"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                  </div>
+                  
+                  <Select value={filterStatus} onValueChange={setFilterStatus}>
+                    <SelectTrigger className="w-full lg:w-40">
+                      <SelectValue placeholder="Statut" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Tous les statuts</SelectItem>
+                      <SelectItem value="draft">Brouillon</SelectItem>
+                      <SelectItem value="review">En révision</SelectItem>
+                      <SelectItem value="published">Publié</SelectItem>
+                    </SelectContent>
+                  </Select>
+
+                  <Select value={filterType} onValueChange={setFilterType}>
+                    <SelectTrigger className="w-full lg:w-40">
+                      <SelectValue placeholder="Type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Tous les types</SelectItem>
+                      <SelectItem value="monthly">Mensuel</SelectItem>
+                      <SelectItem value="annual">Annuel</SelectItem>
+                      <SelectItem value="financial">Financier</SelectItem>
+                      <SelectItem value="conservation">Conservation</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </CardContent>
+            </Card>
+
+
+            {/* Modern Reports Grid/List */}
+            <div className={cn(
+              "gap-6",
+              viewMode === 'grid' ? "grid lg:grid-cols-2" : "space-y-4"
+            )}>
               {filteredReports.map((report) => (
-                <Card key={report.id} className="hover:shadow-md transition-shadow">
-                  <CardHeader>
-                    <div className="flex justify-between items-start">
-                      <div className="space-y-2">
-                        <div className="flex items-center gap-2">
-                          <CardTitle className="text-lg">{report.title}</CardTitle>
-                          <Badge variant={
-                            report.status === 'published' ? 'default' :
-                            report.status === 'review' ? 'secondary' : 'outline'
-                          }>
-                            {report.status === 'published' ? 'Publié' :
-                             report.status === 'review' ? 'En révision' : 'Brouillon'}
-                          </Badge>
+                <Card 
+                  key={report.id} 
+                  className="group hover:shadow-lg transition-all duration-300 cursor-pointer border-2 hover:border-primary/20"
+                  onClick={() => handleViewReport(report.id)}
+                >
+                  <CardHeader className="space-y-4">
+                    <div className="flex items-start justify-between">
+                      <div className="space-y-2 flex-1">
+                        <div className="flex items-center gap-3">
+                          <div className="p-2 rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors">
+                            <FileBarChart className="h-5 w-5 text-primary" />
+                          </div>
+                          <div>
+                            <h3 className="font-semibold text-lg group-hover:text-primary transition-colors">
+                              {report.title}
+                            </h3>
+                            <p className="text-sm text-muted-foreground">
+                              Par {report.author} • {new Date(report.date).toLocaleDateString('fr-FR')}
+                            </p>
+                          </div>
                         </div>
                         
                         <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                          <span>Par {report.author}</span>
-                          <span>{new Date(report.date).toLocaleDateString('fr-FR')}</span>
+                          <Badge variant={
+                            report.status === 'published' ? 'default' :
+                            report.status === 'review' ? 'secondary' : 'outline'
+                          } className="font-medium">
+                            {report.status === 'published' ? '✓ Publié' :
+                             report.status === 'review' ? '⏳ En révision' : '📝 Brouillon'}
+                          </Badge>
                           <span className="flex items-center gap-1">
                             <Eye className="h-4 w-4" />
-                            {report.views} vues
+                            {report.views.toLocaleString()}
                           </span>
                           <span className="flex items-center gap-1">
                             <Download className="h-4 w-4" />
-                            {report.downloads} téléchargements
+                            {report.downloads.toLocaleString()}
                           </span>
                         </div>
                       </div>
+                    </div>
+
+                    <Separator />
+
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className="flex -space-x-2">
+                          <div className="w-6 h-6 rounded-full bg-primary/20 border-2 border-background flex items-center justify-center">
+                            <span className="text-xs font-medium">A</span>
+                          </div>
+                          <div className="w-6 h-6 rounded-full bg-emerald-500/20 border-2 border-background flex items-center justify-center">
+                            <span className="text-xs font-medium">B</span>
+                          </div>
+                        </div>
+                        <span className="text-xs text-muted-foreground">+3 collaborateurs</span>
+                      </div>
                       
-                      <div className="flex gap-2">
-                        <Button variant="outline" size="sm">
-                          <Eye className="mr-2 h-4 w-4" />
-                          Voir
+                      <div className="flex gap-1">
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleViewReport(report.id);
+                          }}
+                          className="opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                          <Eye className="h-4 w-4" />
                         </Button>
-                        <Button variant="outline" size="sm">
-                          <Download className="mr-2 h-4 w-4" />
-                          Télécharger
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleEditReport(report.id);
+                          }}
+                          className="opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                          <Edit className="h-4 w-4" />
                         </Button>
-                        <Button variant="outline" size="sm">
-                          <Edit className="mr-2 h-4 w-4" />
-                          Modifier
-                        </Button>
-                        <Button variant="outline" size="sm">
-                          <Share2 className="mr-2 h-4 w-4" />
-                          Partager
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          onClick={(e) => e.stopPropagation()}
+                          className="opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                          <Share2 className="h-4 w-4" />
                         </Button>
                       </div>
                     </div>
@@ -392,6 +646,27 @@ export default function AdminReports() {
                 </Card>
               ))}
             </div>
+
+            {/* Empty State */}
+            {filteredReports.length === 0 && (
+              <Card className="p-12 text-center">
+                <div className="space-y-4">
+                  <div className="w-16 h-16 mx-auto rounded-full bg-muted flex items-center justify-center">
+                    <FileText className="h-8 w-8 text-muted-foreground" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold">Aucun rapport trouvé</h3>
+                    <p className="text-muted-foreground">
+                      Essayez de modifier vos filtres ou créez un nouveau rapport
+                    </p>
+                  </div>
+                  <Button onClick={() => setIsCreateDialogOpen(true)}>
+                    <Plus className="mr-2 h-4 w-4" />
+                    Créer un rapport
+                  </Button>
+                </div>
+              </Card>
+            )}
           </TabsContent>
 
           <TabsContent value="analytics" className="space-y-4">

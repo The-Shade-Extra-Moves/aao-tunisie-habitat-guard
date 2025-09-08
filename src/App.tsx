@@ -18,6 +18,8 @@ import Dashboard from "./pages/Dashboard";
 import AdminUsers from "./pages/admin/Users";
 import AdminActivities from "./pages/admin/Activities";
 import AdminReports from "./pages/admin/Reports";
+import ReportDetails from "./pages/admin/ReportDetails";
+import ReportEditor from "./pages/admin/ReportEditor";
 import AdminSettings from "./pages/admin/Settings";
 import AdminAnalytics from "./pages/admin/Analytics";
 import NotFound from "./pages/NotFound";
@@ -59,6 +61,21 @@ const App = () => (
           <Route path="/admin/reports" element={
             <ProtectedRoute>
               <AdminReports />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/reports/:id" element={
+            <ProtectedRoute>
+              <ReportDetails />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/reports/:id/edit" element={
+            <ProtectedRoute>
+              <ReportEditor />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/reports/new" element={
+            <ProtectedRoute>
+              <ReportEditor />
             </ProtectedRoute>
           } />
           <Route path="/admin/settings" element={
