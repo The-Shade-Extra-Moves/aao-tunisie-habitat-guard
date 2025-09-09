@@ -22,6 +22,11 @@ import ReportDetails from "./pages/admin/ReportDetails";
 import ReportEditor from "./pages/admin/ReportEditor";
 import AdminSettings from "./pages/admin/Settings";
 import AdminAnalytics from "./pages/admin/Analytics";
+import VolunteerActivities from "./pages/volunteer/Activities";
+import VolunteerSightings from "./pages/volunteer/Sightings";
+import VolunteerReports from "./pages/volunteer/Reports";
+import VolunteerTraining from "./pages/volunteer/Training";
+import VolunteerProfile from "./pages/volunteer/Profile";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -86,6 +91,31 @@ const App = () => (
           <Route path="/admin/analytics" element={
             <ProtectedRoute>
               <AdminAnalytics />
+            </ProtectedRoute>
+          } />
+          <Route path="/volunteer/activities" element={
+            <ProtectedRoute roles={['volunteer']}>
+              <VolunteerActivities />
+            </ProtectedRoute>
+          } />
+          <Route path="/volunteer/sightings" element={
+            <ProtectedRoute roles={['volunteer']}>
+              <VolunteerSightings />
+            </ProtectedRoute>
+          } />
+          <Route path="/volunteer/reports" element={
+            <ProtectedRoute roles={['volunteer']}>
+              <VolunteerReports />
+            </ProtectedRoute>
+          } />
+          <Route path="/volunteer/training" element={
+            <ProtectedRoute roles={['volunteer']}>
+              <VolunteerTraining />
+            </ProtectedRoute>
+          } />
+          <Route path="/volunteer/profile" element={
+            <ProtectedRoute roles={['volunteer']}>
+              <VolunteerProfile />
             </ProtectedRoute>
           } />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

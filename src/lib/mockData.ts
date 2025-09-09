@@ -3,11 +3,12 @@
 export interface Activity {
   id: string;
   title: string;
-  type: 'observation' | 'conservation' | 'research' | 'education' | 'event';
+  type: 'observation' | 'conservation' | 'research' | 'education' | 'event' | 'field_survey';
   date: string;
   location: string;
-  status: 'planned' | 'ongoing' | 'completed' | 'cancelled';
-  participants: number;
+  duration?: string;
+  status: 'planned' | 'ongoing' | 'completed' | 'cancelled' | 'active';
+  participants: string[];
   description: string;
   coordinator: string;
 }
@@ -15,12 +16,15 @@ export interface Activity {
 export interface Report {
   id: string;
   title: string;
-  type: 'field_report' | 'research' | 'monthly' | 'annual';
+  type: 'field_report' | 'research' | 'monthly' | 'annual' | 'field_survey' | 'species_count' | 'conservation';
   author: string;
   date: string;
-  status: 'draft' | 'review' | 'published';
+  location?: string;
+  summary?: string;
+  status: 'draft' | 'review' | 'published' | 'under_review';
   views: number;
   downloads: number;
+  content?: string;
 }
 
 export interface BirdSighting {
@@ -32,7 +36,9 @@ export interface BirdSighting {
   coordinates: [number, number];
   date: string;
   observer: string;
+  verification: 'pending' | 'verified' | 'rejected';
   verified: boolean;
+  rarity?: 'common' | 'rare' | 'endangered';
   photos: string[];
   notes: string;
 }
@@ -56,8 +62,9 @@ export const mockActivities: Activity[] = [
     type: 'observation',
     date: '2024-01-20',
     location: 'Lac de Tunis',
+    duration: '4 hours',
     status: 'completed',
-    participants: 12,
+    participants: ['Fatima Trabelsi', 'Ahmed Ben Salah', 'Youssef Mansouri'],
     description: 'Comptage annuel des flamants roses dans la région du lac de Tunis',
     coordinator: 'Ahmed Ben Salah'
   },
@@ -67,8 +74,9 @@ export const mockActivities: Activity[] = [
     type: 'conservation',
     date: '2024-02-15',
     location: 'Parc National Ichkeul',
-    status: 'ongoing',
-    participants: 25,
+    duration: '6 hours',
+    status: 'active',
+    participants: ['Fatima Trabelsi', 'Leila Khouja'],
     description: 'Projet de restauration des zones humides pour les oiseaux migrateurs',
     coordinator: 'Fatima Trabelsi'
   },
@@ -78,8 +86,9 @@ export const mockActivities: Activity[] = [
     type: 'education',
     date: '2024-03-10',
     location: 'Station de baguage Kuriat',
+    duration: '8 hours',
     status: 'planned',
-    participants: 8,
+    participants: ['Fatima Trabelsi'],
     description: 'Formation technique sur les méthodes de baguage scientifique',
     coordinator: 'Leila Khouja'
   }
@@ -127,8 +136,10 @@ export const mockSightings: BirdSighting[] = [
     location: 'Lac de Tunis',
     coordinates: [36.8, 10.18],
     date: '2024-01-20',
-    observer: 'Youssef Mansouri',
+    observer: 'Fatima Trabelsi',
+    verification: 'verified',
     verified: true,
+    rarity: 'common',
     photos: ['https://images.unsplash.com/photo-1551244072-f5b3c8558ae5?w=400'],
     notes: 'Groupe important observé en alimentation'
   },
@@ -141,22 +152,11 @@ export const mockSightings: BirdSighting[] = [
     coordinates: [37.27, 9.87],
     date: '2024-02-15',
     observer: 'Fatima Trabelsi',
-    verified: true,
+    verification: 'pending',
+    verified: false,
+    rarity: 'rare',
     photos: ['https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=400'],
     notes: 'Migration de printemps, direction nord-est'
-  },
-  {
-    id: '3',
-    species: 'Faucon pèlerin',
-    scientificName: 'Falco peregrinus',
-    count: 2,
-    location: 'Cap Bon',
-    coordinates: [36.4, 10.8],
-    date: '2024-03-01',
-    observer: 'Ahmed Ben Salah',
-    verified: false,
-    photos: [],
-    notes: 'Couple nicheur probable, à confirmer'
   }
 ];
 
