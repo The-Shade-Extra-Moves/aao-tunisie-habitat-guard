@@ -7,12 +7,14 @@ import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const navigation = [
-  { name: 'Dashboard', href: '/dashboard', icon: Calendar, current: false },
+  { name: 'Dashboard', href: '/volunteer/dashboard', icon: Calendar, current: false },
   { name: 'Activities', href: '/volunteer/activities', icon: Calendar, current: false },
   { name: 'Sightings', href: '/volunteer/sightings', icon: MapPin, current: false },
   { name: 'Reports', href: '/volunteer/reports', icon: CheckCircle, current: false },
   { name: 'Training', href: '/volunteer/training', icon: Users, current: true },
   { name: 'Profile', href: '/volunteer/profile', icon: Users, current: false },
+  { name: 'Messages', href: '/volunteer/messages', icon: Users, current: false },
+  { name: 'Calendar', href: '/volunteer/calendar', icon: Users, current: false },
 ];
 
 const courses = [

@@ -9,12 +9,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { mockActivities } from '@/lib/mockData';
 
 const navigation = [
-  { name: 'Dashboard', href: '/dashboard', icon: Calendar, current: false },
+  { name: 'Dashboard', href: '/volunteer/dashboard', icon: Calendar, current: false },
   { name: 'Activities', href: '/volunteer/activities', icon: Calendar, current: true },
   { name: 'Sightings', href: '/volunteer/sightings', icon: MapPin, current: false },
   { name: 'Reports', href: '/volunteer/reports', icon: CheckCircle, current: false },
   { name: 'Training', href: '/volunteer/training', icon: Users, current: false },
   { name: 'Profile', href: '/volunteer/profile', icon: Users, current: false },
+  { name: 'Messages', href: '/volunteer/messages', icon: Users, current: false },
+  { name: 'Calendar', href: '/volunteer/calendar', icon: Users, current: false },
 ];
 
 export default function VolunteerActivities() {

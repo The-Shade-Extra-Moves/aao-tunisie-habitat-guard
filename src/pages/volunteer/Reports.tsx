@@ -10,12 +10,14 @@ import { mockReports } from '@/lib/mockData';
 import { Progress } from '@/components/ui/progress';
 
 const navigation = [
-  { name: 'Dashboard', href: '/dashboard', icon: Calendar, current: false },
+  { name: 'Dashboard', href: '/volunteer/dashboard', icon: Calendar, current: false },
   { name: 'Activities', href: '/volunteer/activities', icon: Calendar, current: false },
   { name: 'Sightings', href: '/volunteer/sightings', icon: MapPin, current: false },
   { name: 'Reports', href: '/volunteer/reports', icon: CheckCircle, current: true },
   { name: 'Training', href: '/volunteer/training', icon: Users, current: false },
   { name: 'Profile', href: '/volunteer/profile', icon: Users, current: false },
+  { name: 'Messages', href: '/volunteer/messages', icon: Users, current: false },
+  { name: 'Calendar', href: '/volunteer/calendar', icon: Users, current: false },
 ];
 
 export default function VolunteerReports() {
