@@ -490,7 +490,7 @@ export default function AdminAnalytics() {
                 <CardContent className="space-y-4">
                   <div className="text-center">
                     <div className="text-2xl font-bold">
-                      {Math.round(mockActivities.reduce((sum, a) => sum + a.participants, 0) / mockActivities.length)}
+                      {Math.round(mockActivities.reduce((sum, a) => sum + a.participants.length, 0) / mockActivities.length)}
                     </div>
                     <p className="text-sm text-muted-foreground">Participants moyens</p>
                   </div>
@@ -499,7 +499,7 @@ export default function AdminAnalytics() {
                     <div className="flex justify-between text-sm">
                       <span>Total participants</span>
                       <span className="font-medium">
-                        {mockActivities.reduce((sum, a) => sum + a.participants, 0)}
+                        {mockActivities.reduce((sum, a) => sum + a.participants.length, 0)}
                       </span>
                     </div>
                     <div className="flex justify-between text-sm">

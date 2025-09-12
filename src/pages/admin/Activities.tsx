@@ -262,7 +262,7 @@ export default function AdminActivities() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                {mockActivities.reduce((sum, a) => sum + a.participants, 0)}
+                {mockActivities.reduce((sum, a) => sum + a.participants.length, 0)}
               </div>
             </CardContent>
           </Card>
